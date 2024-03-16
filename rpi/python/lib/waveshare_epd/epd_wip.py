@@ -95,64 +95,88 @@ class EPD:
         self.send_data(0X00)
         self.ReadBusyH()
         
-    def ReadBusy(self):
-        logger.debug("e-Paper busy")
-        while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
-            epdconfig.delay_ms(100)    
-        logger.debug("e-Paper busy release")
-        
     def init(self):
         if (epdconfig.module_init() != 0):
             return -1
         # EPD hardware init start
         self.reset()
-        
-        self.send_command(0x01) # POWER_SETTING
-        self.send_data2([0x37, 0x00])
-        
-        self.send_command(0x00) # PANEL_SETTING
-        self.send_data2([0xCF, 0x08])
-        
-        self.send_command(0x06) # BOOSTER_SOFT_START
-        self.send_data2([0xc7, 0xcc, 0x28])
-        
-        self.send_command(0x04) # POWER_ON
-        self.ReadBusy()
-        
-        self.send_command(0x30) # PLL_CONTROL
-        self.send_data(0x3c)
-        
-        self.send_command(0x41) # TEMPERATURE_CALIBRATION
-        self.send_data(0x00)
-        
-        self.send_command(0x50) # VCOM_AND_DATA_INTERVAL_SETTING
-        self.send_data(0x77)
-        
-        self.send_command(0x60) # TCON_SETTING
+        self.ReadBusyH()
+        epdconfig.delay_ms(30)
+
+        self.send_command(0xAA)
+        self.send_data(0x49)
+        self.send_data(0x55)
+        self.send_data(0x20)
+        self.send_data(0x08)
+        self.send_data(0x09)
+        self.send_data(0x18)
+
+        self.send_command(0x01)
+        self.send_data(0x3F)
+
+        self.send_command(0x00)
+        self.send_data(0x4F)
+        self.send_data(0x69)
+
+        self.send_command(0x05)
+        self.send_data(0x40)
+        self.send_data(0x1F)
+        self.send_data(0x1F)
+        self.send_data(0x2C)
+
+        self.send_command(0x08)
+        self.send_data(0x6F)
+        self.send_data(0x1F)
+        self.send_data(0x1F)
         self.send_data(0x22)
-        
-        self.send_command(0x61) # TCON_RESOLUTION
-        self.send_data(EPD_WIDTH >> 8)     #source 640
-        self.send_data(EPD_WIDTH & 0xff)
-        self.send_data(EPD_HEIGHT >> 8)     #gate 384
-        self.send_data(EPD_HEIGHT & 0xff)
-        
-        self.send_command(0x82) # VCM_DC_SETTING
-        self.send_data(0x1E) # decide by LUT file
-        
-        self.send_command(0xe5) # FLASH MODE
+
+        # ===================
+        # 20211212
+        # First setting
+        self.send_command(0x06)
+        self.send_data(0x6F)
+        self.send_data(0x1F)
+        self.send_data(0x14)
+        self.send_data(0x14)
+        # ===================
+
+        self.send_command(0x03)
+        self.send_data(0x00)
+        self.send_data(0x54)
+        self.send_data(0x00)
+        self.send_data(0x44)
+
+        self.send_command(0x60)
+        self.send_data(0x02)
+        self.send_data(0x00)
+        # Please notice that PLL must be set for version 2 IC
+        self.send_command(0x30)
+        self.send_data(0x08)
+
+        self.send_command(0x50)
+        self.send_data(0x3F)
+
+        self.send_command(0x61)
         self.send_data(0x03)
-        
-        # EPD hardware init end
+        self.send_data(0x20)
+        self.send_data(0x01)
+        self.send_data(0xE0)
+
+        self.send_command(0xE3)
+        self.send_data(0x2F)
+
+        self.send_command(0x84)
+        self.send_data(0x01)
         return 0
 
     def getbuffer(self, image):
         # Create a pallette with the 4 colors supported by the panel
         pal_image = Image.new("P", (1,1))
-        pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0) + (0,0,0)*252)
+        pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0) + (0,0,0)*253)
 
         # Check if we need to rotate the image
         imwidth, imheight = image.size
+        #logger.info(f"Image size")
         if(imwidth == self.width and imheight == self.height):
             image_temp = image
         elif(imwidth == self.height and imheight == self.width):
@@ -165,27 +189,40 @@ class EPD:
         buf_4color = bytearray(image_4color.tobytes('raw'))
 
         # into a single byte to transfer to the panel
-        buf = [0x00] * int(self.width * self.height // 3)
+        buf = [0x00] * int(self.width * self.height / 4)
         idx = 0
-        for i in range(0, len(buf_4color), 3):
-            buf[idx] = (buf_4color[i] << 5) + (buf_4color[i+1] << 2) + (buf_4color[i+2] >> 1)
+        for i in range(0, len(buf_4color), 4):
+            buf[idx] = (buf_4color[i] << 6) + (buf_4color[i+1] << 4) + (buf_4color[i+2] << 2) + buf_4color[i+3]
             idx += 1
-
         return buf
-        
+
     def display(self, image):
+        Width = self.width // 4
+        Height = self.height
+
+        self.send_command(0x04)
+        self.ReadBusyH()
+        logger.debug(f"image is {image}")
+
         self.send_command(0x10)
-        self.send_data2(image)
-        self.send_command(0x12)
-        epdconfig.delay_ms(100)
-        self.ReadBusy()
+        for j in range(0, Height):
+            for i in range(0, Width):
+                    self.send_data(image[i + j * Width])
+        self.TurnOnDisplay()
         
-    def Clear(self):
-        buf = [0x33] * int(self.width * self.height / 2)
+    def Clear(self, color=0x55):
+        Width = self.width // 4
+        Height = self.height
+
+        self.send_command(0x04)
+        self.ReadBusyH()
+
         self.send_command(0x10)
-        self.send_data2(buf)
-        self.send_command(0x12)
-        self.ReadBusy()
+        for j in range(0, Height):
+            for i in range(0, Width):
+                self.send_data(color)
+
+        self.TurnOnDisplay()
 
     def sleep(self):
         self.send_command(0x02) # POWER_OFF
@@ -196,10 +233,5 @@ class EPD:
         
         epdconfig.delay_ms(2000)
         epdconfig.module_exit()
-    def send_data2(self, data):
-        epdconfig.digital_write(self.dc_pin, 1)
-        epdconfig.digital_write(self.cs_pin, 0)
-        epdconfig.spi_writebyte2(data)
-        epdconfig.digital_write(self.cs_pin, 1)
 ### END OF FILE ###
 
