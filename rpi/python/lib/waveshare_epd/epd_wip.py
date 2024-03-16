@@ -89,18 +89,18 @@ class EPD:
     def TurnOnDisplay(self):
         self.send_command(0x12) # DISPLAY_REFRESH
         self.send_data(0x01)
-        self.ReadBusyL()
+        self.ReadBusyH()
 
         self.send_command(0x02) # POWER_OFF
         self.send_data(0X00)
-        self.ReadBusyL()
+        self.ReadBusyH()
         
     def init(self):
         if (epdconfig.module_init() != 0):
             return -1
         # EPD hardware init start
         self.reset()
-        self.ReadBusyL()
+        self.ReadBusyH()
         epdconfig.delay_ms(30)
 
         self.send_command(0xAA)
