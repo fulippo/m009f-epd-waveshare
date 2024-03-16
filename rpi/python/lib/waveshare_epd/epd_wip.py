@@ -51,7 +51,6 @@ class EPD:
         self.height = EPD_HEIGHT
         self.BLACK  = 0x000000   #   00  BGR
         self.WHITE  = 0xffffff   #   01
-        self.YELLOW = 0x00ffff   #   10
         self.RED    = 0x0000ff   #   11
         
     # Hardware reset
@@ -177,6 +176,7 @@ class EPD:
 
         # Check if we need to rotate the image
         imwidth, imheight = image.size
+        logger.info(f"Image size is {image.size}")
         if(imwidth == self.width and imheight == self.height):
             image_temp = image
         elif(imwidth == self.height and imheight == self.width):
@@ -202,7 +202,7 @@ class EPD:
 
         self.send_command(0x04)
         self.ReadBusyH()
-        logger.debug(f"image is {image}")
+        #logger.debug(f"image is {image}")
 
         self.send_command(0x10)
         for j in range(0, Height):
