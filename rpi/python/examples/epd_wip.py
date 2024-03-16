@@ -26,40 +26,28 @@ try:
     font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
     font40 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 40)
     
-    # Drawing on the image
-    logging.info("1.Drawing on the image...")
-    Himage = Image.new('RGB', (epd.width, epd.height), epd.WHITE)  # 255: clear the frame
-    draw = ImageDraw.Draw(Himage)
-    draw.text((5, 0), 'hello world', font = font18, fill = epd.RED)
+    while True:
+        # Drawing on the image
+        logging.info("1.Drawing on the image...")
+        Himage = Image.new('RGB', (epd.width, epd.height), epd.WHITE)  # 255: clear the frame
+        draw = ImageDraw.Draw(Himage)
+        draw.text((5, 0), 'hello world', font = font18, fill = epd.RED)
 
 
-    draw.line((5, 170, 80, 245), fill = epd.RED)
+        draw.line((5, 170, 80, 245), fill = epd.RED)
+        
+        draw.rectangle((5, 170, 80, 245), outline = epd.BLACK)
+        
+        draw.arc((5, 250, 80, 325), 0, 360, fill = epd.BLACK)
+        draw.chord((90, 250, 165, 325), 0, 360, fill = epd.RED)
+        epd.display(epd.getbuffer(Himage))
+        time.sleep(3)
+        logging.info("Clear...")
+        epd.Clear()
     
-    draw.rectangle((5, 170, 80, 245), outline = epd.BLACK)
     
-    draw.arc((5, 250, 80, 325), 0, 360, fill = epd.BLACK)
-    draw.chord((90, 250, 165, 325), 0, 360, fill = epd.RED)
-    epd.display(epd.getbuffer(Himage))
-    time.sleep(3)
     
-    # read bmp file 
-    logging.info("2.read bmp file")
-    Himage = Image.open(os.path.join(picdir, '7.3inch-1.bmp'))
-    epd.display(epd.getbuffer(Himage))
-    time.sleep(3)
 
-    logging.info("3.read bmp file")
-    Himage = Image.open(os.path.join(picdir, '7.3inch-2.bmp'))
-    epd.display(epd.getbuffer(Himage))
-    time.sleep(3)
-
-    logging.info("4.read bmp file")
-    Himage = Image.open(os.path.join(picdir, '7.3inch-3.bmp'))
-    epd.display(epd.getbuffer(Himage))
-    time.sleep(3)
-    
-    logging.info("Clear...")
-    epd.Clear()
     
     logging.info("Goto Sleep...")
     epd.sleep()
