@@ -203,5 +203,10 @@ class EPD:
         
         epdconfig.delay_ms(2000)
         epdconfig.module_exit()
+    def send_data2(self, data):
+        epdconfig.digital_write(self.dc_pin, 1)
+        epdconfig.digital_write(self.cs_pin, 0)
+        epdconfig.spi_writebyte2(data)
+        epdconfig.digital_write(self.cs_pin, 1)
 ### END OF FILE ###
 
