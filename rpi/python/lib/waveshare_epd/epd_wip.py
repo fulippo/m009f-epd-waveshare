@@ -170,6 +170,7 @@ class EPD:
         for i in range(0, len(buf_4color), 3):
             buf[idx] = (buf_4color[i] << 5) + (buf_4color[i+1] << 2) + (buf_4color[i+2] >> 1)
             idx += 1
+        return buf
 
         
     def display(self, image):
