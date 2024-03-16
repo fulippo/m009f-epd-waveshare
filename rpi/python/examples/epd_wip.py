@@ -31,15 +31,12 @@ try:
     Himage = Image.new('RGB', (epd.width, epd.height), epd.WHITE)  # 255: clear the frame
     draw = ImageDraw.Draw(Himage)
     draw.text((5, 0), 'hello world', font = font18, fill = epd.RED)
-    draw.text((5, 20), '7.3inch e-Paper', font = font24, fill = epd.YELLOW)
-    draw.text((5, 45), u'微雪电子', font = font40, fill = epd.BLACK)
-    draw.text((5, 85), u'微雪电子', font = font40, fill = epd.YELLOW)
-    draw.text((5, 125), u'微雪电子', font = font40, fill = epd.RED)
+
 
     draw.line((5, 170, 80, 245), fill = epd.RED)
-    draw.line((80, 170, 5, 245), fill = epd.YELLOW)
+    
     draw.rectangle((5, 170, 80, 245), outline = epd.BLACK)
-    draw.rectangle((90, 170, 165, 245), fill = epd.YELLOW)
+    
     draw.arc((5, 250, 80, 325), 0, 360, fill = epd.BLACK)
     draw.chord((90, 250, 165, 325), 0, 360, fill = epd.RED)
     epd.display(epd.getbuffer(Himage))
