@@ -186,6 +186,7 @@ class EPD:
 
         # Convert the soruce image to the 4 colors, dithering if needed
         image_4color = image_temp.convert("RGB").quantize(palette=pal_image)
+        logger.info(f"image4color is {image_4color}")
         buf_4color = bytearray(image_4color.tobytes('raw'))
 
         # into a single byte to transfer to the panel
@@ -202,7 +203,7 @@ class EPD:
 
         self.send_command(0x04)
         self.ReadBusyH()
-        logger.debug(f"image is {image}")
+        #logger.debug(f"image is {image}")
 
         self.send_command(0x10)
         for j in range(0, Height):
