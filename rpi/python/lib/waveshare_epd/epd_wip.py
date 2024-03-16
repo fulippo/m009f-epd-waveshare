@@ -114,10 +114,24 @@ class EPD:
         self.send_command(0x01)
         self.send_data(0x3F)
 
-        self.send_command(0x00)
-        self.send_data(0x4F)
-        self.send_data(0x69)
-
+        #self.send_command(0x00) # filippo orig
+        self.send_data(0x00) # filippo
+        
+        self.send_data(0x32) # filippo
+        self.send_data(0x2A) # filippo
+        self.send_data(0x0E) # filippo
+        self.send_data(0x2A) # filippo
+        self.send_command(0x00) # filippo
+        self.send_data(0x5F) # filippo
+        self.send_data(0x69) # filippo
+        #self.send_data(0x4F) # filippo orig
+        #self.send_data(0x69) # filippo orig
+        self.send_command(0x03) # filippo
+        self.send_data(0x00) # filippo
+        self.send_data(0x54) # filippo
+        self.send_data(0x00) # filippo
+        self.send_data(0x44) # filippo
+        
         self.send_command(0x05)
         self.send_data(0x40)
         self.send_data(0x1F)
