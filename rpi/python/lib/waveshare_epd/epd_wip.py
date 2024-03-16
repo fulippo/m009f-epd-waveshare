@@ -149,7 +149,7 @@ class EPD:
     def getbuffer(self, image):
         # Create a pallette with the 4 colors supported by the panel
         pal_image = Image.new("P", (1,1))
-        pal_image.putpalette( (0,0,0,  255,255,255,  255,255,0,   255,0,0) + (0,0,0)*252)
+        pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0) + (0,0,0)*252)
 
         # Check if we need to rotate the image
         imwidth, imheight = image.size
@@ -170,8 +170,8 @@ class EPD:
         for i in range(0, len(buf_4color), 3):
             buf[idx] = (buf_4color[i] << 5) + (buf_4color[i+1] << 2) + (buf_4color[i+2] >> 1)
             idx += 1
-        return buf
 
+        return buf
         
     def display(self, image):
         self.send_command(0x10)
