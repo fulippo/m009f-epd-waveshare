@@ -197,8 +197,10 @@ class EPD:
         return buf
 
     def display(self, image):
-        Width = self.width // 4 + 1
-        Height = self.height
+        if self.width % 4 == 0 :
+            Width = self.width // 4
+        else :
+            Width = self.width // 4 + 1
 
         self.send_command(0x04)
         self.ReadBusyH()
@@ -211,8 +213,10 @@ class EPD:
         self.TurnOnDisplay()
         
     def Clear(self, color=0x55):
-        Width = self.width // 4
-        Height = self.height
+        if self.width % 4 == 0 :
+            Width = self.width // 4
+        else :
+            Width = self.width // 4 + 1
 
         self.send_command(0x04)
         self.ReadBusyH()
