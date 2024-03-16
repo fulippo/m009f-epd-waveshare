@@ -108,13 +108,13 @@ class EPD:
         self.reset()
         
         self.send_command(0x01) # POWER_SETTING
-        self.send_data2([0x37, 0x00])
+        self.send_data([0x37, 0x00])
         
         self.send_command(0x00) # PANEL_SETTING
-        self.send_data2([0xCF, 0x08])
+        self.send_data([0xCF, 0x08])
         
         self.send_command(0x06) # BOOSTER_SOFT_START
-        self.send_data2([0xc7, 0xcc, 0x28])
+        self.send_data([0xc7, 0xcc, 0x28])
         
         self.send_command(0x04) # POWER_ON
         self.ReadBusy()
@@ -182,7 +182,7 @@ class EPD:
         
     def display(self, image):
         self.send_command(0x10)
-        self.send_data2(image)
+        self.send_data(image)
         self.send_command(0x12)
         epdconfig.delay_ms(100)
         self.ReadBusy()
@@ -190,7 +190,7 @@ class EPD:
     def Clear(self):
         buf = [0x33] * int(self.width * self.height / 2)
         self.send_command(0x10)
-        self.send_data2(buf)
+        self.send_data(buf)
         self.send_command(0x12)
         self.ReadBusy()
 
@@ -203,10 +203,5 @@ class EPD:
         
         epdconfig.delay_ms(2000)
         epdconfig.module_exit()
-    def send_data2(self, data):
-        epdconfig.digital_write(self.dc_pin, 1)
-        epdconfig.digital_write(self.cs_pin, 0)
-        epdconfig.spi_writebyte2(data)
-        epdconfig.digital_write(self.cs_pin, 1)
 ### END OF FILE ###
 
