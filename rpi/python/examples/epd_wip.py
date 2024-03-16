@@ -8,7 +8,7 @@ if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
-from waveshare_epd import edp_wip
+from waveshare_epd import epd_wip
 import time
 from PIL import Image,ImageDraw,ImageFont
 import traceback
@@ -16,9 +16,9 @@ import traceback
 logging.basicConfig(level=logging.DEBUG)
 
 try:
-    logging.info("edp_wip Demo")
+    logging.info("epd_wip Demo")
 
-    epd = edp_wip.EPD()   
+    epd = epd_wip.EPD()   
     logging.info("init and Clear")
     epd.init()
     epd.Clear()
@@ -72,5 +72,5 @@ except IOError as e:
     
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
-    edp_wip.epdconfig.module_exit(cleanup=True)
+    epd_wip.epdconfig.module_exit(cleanup=True)
     exit()
