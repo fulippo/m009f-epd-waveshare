@@ -165,12 +165,12 @@ class EPD:
         buf_4color = bytearray(image_4color.tobytes('raw'))
 
         # into a single byte to transfer to the panel
-        buf = [0x00] * int(self.width * self.height / 4)
+        buf = [0x00] * int(self.width * self.height // 3)
         idx = 0
-        for i in range(0, len(buf_4color), 4):
-            buf[idx] = (buf_4color[i] << 6) + (buf_4color[i+1] << 4) + (buf_4color[i+2] << 2) + buf_4color[i+3]
+        for i in range(0, len(buf_4color), 3):
+            buf[idx] = (buf_4color[i] << 5) + (buf_4color[i+1] << 2) + (buf_4color[i+2] >> 1)
             idx += 1
-        return buf
+
         
     def display(self, image):
         self.send_command(0x10)
