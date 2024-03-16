@@ -137,6 +137,12 @@ class EPD:
         self.send_data(0x1F)
         self.send_data(0x1F)
         self.send_data(0x2C)
+  
+        self.send_command(0x06) # filippo
+        self.send_data(0x6F) # filippo
+        self.send_data(0x1F) # filippo
+        self.send_data(0x16) # filippo
+        self.send_data(0x25) # filippo
 
         self.send_command(0x08)
         self.send_data(0x6F)
@@ -165,7 +171,8 @@ class EPD:
         self.send_data(0x00)
         # Please notice that PLL must be set for version 2 IC
         self.send_command(0x30)
-        self.send_data(0x08)
+        # self.send_data(0x08) # filippo orig
+        self.send_data(0x02) # filippo
 
         self.send_command(0x50)
         self.send_data(0x3F)
