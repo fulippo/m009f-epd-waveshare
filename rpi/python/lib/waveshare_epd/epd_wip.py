@@ -94,8 +94,104 @@ class EPD:
         self.send_command(0x02) # POWER_OFF
         self.send_data(0X00)
         self.ReadBusyH()
-        
     def init(self):
+        if (epdconfig.module_init() != 0):
+            return -1
+            
+        self.reset()
+
+        self.send_command(0x01) # POWER_SETTING
+        self.send_data(0x37)
+        self.send_data(0x00)
+        
+        self.send_command(0x00) # PANEL_SETTING
+        self.send_data(0xCF)
+        self.send_data(0x08)
+        
+        self.send_command(0x30) # PLL_CONTROL
+        self.send_data(0x3A) # PLL:  0-15:0x3C, 15+:0x3A
+        
+        self.send_command(0x82) # VCM_DC_SETTING
+        self.send_data(0x28) #all temperature  range
+
+        self.send_command(0x06) # BOOSTER_SOFT_START
+        self.send_data(0xc7)
+        self.send_data(0xcc)
+        self.send_data(0x15)
+
+        self.send_command(0x50) # VCOM AND DATA INTERVAL SETTING
+        self.send_data(0x77)
+
+        self.send_command(0x60) # TCON_SETTING
+        self.send_data(0x22)
+
+        self.send_command(0x65) # FLASH CONTROL
+        self.send_data(0x00)
+
+        self.send_command(0x61) # TCON_RESOLUTION
+        self.send_data(self.width >> 8) # source 640
+        self.send_data(self.width & 0xff)
+        self.send_data(self.height >> 8) # gate 384
+        self.send_data(self.height & 0xff)
+
+        self.send_command(0xe5) # FLASH MODE
+        self.send_data(0x03)
+        
+        return 0
+
+    def getbuffer(self, image):
+        # logger.debug("bufsiz = ",int(self.width/8) * self.height)
+        buf = [0xFF] * (int(self.width/8) * self.height)
+        image_monocolor = image.convert('1')
+        imwidth, imheight = image_monocolor.size
+        pixels = image_monocolor.load()
+        logger.debug('imwidth = %d  imheight =  %d ',imwidth, imheight)
+        if(imwidth == self.width and imheight == self.height):
+            logger.debug("Horizontal")
+            for y in range(imheight):
+                for x in range(imwidth):
+                    # Set the bits for the column of pixels at the current position.
+                    if pixels[x, y] == 0:
+                        buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
+        elif(imwidth == self.height and imheight == self.width):
+            logger.debug("Vertical")
+            for y in range(imheight):
+                for x in range(imwidth):
+                    newx = y
+                    newy = self.height - x - 1
+                    if pixels[x, y] == 0:
+                        buf[int((newx + newy*self.width) / 8)] &= ~(0x80 >> (y % 8))
+        return buf
+
+    def display(self, imageblack, imagered):
+        self.send_command(0x10)
+        for i in range(0, int(self.width / 8 * self.height)):
+            temp1 = imageblack[i]
+            temp2 = imagered[i]
+            j = 0
+            while (j < 8):
+                if ((temp2 & 0x80) == 0x00):
+                    temp3 = 0x04                #red
+                elif ((temp1 & 0x80) == 0x00):
+                    temp3 = 0x00                #black
+                else:
+                    temp3 = 0x03                #white
+					
+                temp3 = (temp3 << 4) & 0xFF
+                temp1 = (temp1 << 1) & 0xFF
+                temp2 = (temp2 << 1) & 0xFF
+                j += 1
+                if((temp2 & 0x80) == 0x00):
+                    temp3 |= 0x04              #red
+                elif ((temp1 & 0x80) == 0x00):
+                    temp3 |= 0x00              #black
+                else:
+                    temp3 |= 0x03              #white
+                temp1 = (temp1 << 1) & 0xFF
+                temp2 = (temp2 << 1) & 0xFF
+                self.send_data(temp3)
+                j += 1
+    def initb(self):
         if (epdconfig.module_init() != 0):
             return -1
         # EPD hardware init start
@@ -169,7 +265,7 @@ class EPD:
         self.send_data(0x01)
         return 0
 
-    def getbuffer(self, image):
+    def getbufferb(self, image):
         # Create a pallette with the 4 colors supported by the panel
         pal_image = Image.new("P", (1,1))
         pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0) + (0,0,0)*253)
@@ -196,7 +292,7 @@ class EPD:
             idx += 1
         return buf
 
-    def display(self, image):
+    def displayb(self, image):
         Width = self.width // 4
         Height = self.height
 
