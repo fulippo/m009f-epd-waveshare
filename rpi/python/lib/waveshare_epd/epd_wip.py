@@ -133,6 +133,7 @@ class EPD:
         return buf
 
     def display(self, image):
+        logger.debug("Starting display")
         if self.width % 8 == 0 :
             Width = self.width // 8
         else :
@@ -143,7 +144,9 @@ class EPD:
         for j in range(0, Height):
             for i in range(0, Width):
                     self.send_data(image[i + j * Width])
+        logger.debug("Refreshing after image data written")
         self.refresh()
+        logger.debug("Sleep after refresh")
         self.sleep()
         
     def Clear(self, color=0x55):
