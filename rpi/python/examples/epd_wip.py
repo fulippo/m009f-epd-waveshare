@@ -87,8 +87,5 @@ if __name__ == "__main__":
     main()
     time.sleep(3)
     logging.info("Clear...")
-    epd.clear()
-    logging.info("Goto Sleep...")
-    epd.sleep()
         
 
