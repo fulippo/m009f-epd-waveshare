@@ -68,10 +68,14 @@ class EPD:
         self.check_busy()
         
     def init(self):
+        logger.debug("Starting init routine")
         if (epdconfig.module_init() != 0):
             return -1
+        logger.debug("EDP module initialization complete")
         # EPD hardware init start
         self.reset()
+
+        logger.debug("Resetting")
         self.check_busy()
         epdconfig.delay_ms(30)
 
@@ -96,6 +100,7 @@ class EPD:
         self.send_command(0x04)
         epdconfig.delay_ms(100)
         self.check_busy()
+        logger.debug("Init complete")
         return 0
 
     def getbuffer(self, image):
