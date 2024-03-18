@@ -1,179 +1,135 @@
-import logging
-from . import epdconfig
-
-import PIL
-from PIL import Image
-import io
-
-# Display resolution
-EPD_WIDTH       = 800
-EPD_HEIGHT      = 480
-
-logger = logging.getLogger(__name__)
+import spidev
+import RPi.GPIO as GPIO
+import time
 
 class EPD:
     def __init__(self):
-        self.reset_pin = epdconfig.RST_PIN
-        self.dc_pin = epdconfig.DC_PIN
-        self.busy_pin = epdconfig.BUSY_PIN
-        self.cs_pin = epdconfig.CS_PIN
-        self.width = EPD_WIDTH
-        self.height = EPD_HEIGHT
-        self.BLACK  = 0x000000   #   00  BGR
-        self.WHITE  = 0xffffff   #   01
-        self.RED    = 0x0000ff   #   11
-    
-    
+        self.spi = spidev.SpiDev()
+        self.spi.open(0, 0)
+        self.spi.max_speed_hz = 5000000
 
-    # Hardware reset
-    def reset(self):
-        epdconfig.digital_write(self.reset_pin, 1)
-        epdconfig.delay_ms(200) 
-        epdconfig.digital_write(self.reset_pin, 0)         # module reset
-        epdconfig.delay_ms(2)
-        epdconfig.digital_write(self.reset_pin, 1)
-        epdconfig.delay_ms(200)   
+        self.LCD_XSIZE = 800  # 水平大小
+        self.LCD_YSIZE = 480  # 垂直大小
 
-    def send_command(self, command):
-        epdconfig.digital_write(self.dc_pin, 0)
-        epdconfig.digital_write(self.cs_pin, 0)
-        epdconfig.spi_writebyte([command])
-        epdconfig.digital_write(self.cs_pin, 1)
+        self.E_Paper_BS = 9
+        self.EPD_Rest = 11
+        self.E_Paper_DC = 10
+        self.E_Paper_CS = 3
+        self.E_Paper_SCK = 5
+        self.E_Paper_SDI = 7
+        self.E_Paper_BUSY = 0
+        self.E_Paper_DC = 6
 
-    def send_data(self, data):
-        epdconfig.digital_write(self.dc_pin, 1)
-        epdconfig.digital_write(self.cs_pin, 0)
-        epdconfig.delay_ms(10)
-        epdconfig.spi_writebyte([data])
-        epdconfig.digital_write(self.cs_pin, 1)
-        
-    def check_busy(self):
-        logger.debug("e-Paper still busy")
-        while(epdconfig.digital_read(self.busy_pin) == 1):      # 0: idle, 1: busy
-            epdconfig.delay_ms(5)
-        logger.debug("e-Paper no longer busy")
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(self.EPD_Rest, GPIO.OUT)
+        GPIO.setup(self.E_Paper_DC, GPIO.OUT)
+        GPIO.setup(self.E_Paper_CS, GPIO.OUT)
+        GPIO.setup(self.E_Paper_SCK, GPIO.OUT)
+        GPIO.setup(self.E_Paper_SDI, GPIO.OUT)
+        GPIO.setup(self.E_Paper_BUSY, GPIO.IN)
 
-    def TurnOnDisplay(self):
-        self.send_command(0x12) # DISPLAY_REFRESH
-        self.send_data(0x01)
-        self.check_busy()
+    def EPD_SPI_Write(self, value):
+        for i in range(8):
+            GPIO.output(self.E_Paper_SCK, 0)
+            if value & 0x80:
+                GPIO.output(self.E_Paper_SDI, 1)
+            else:
+                GPIO.output(self.E_Paper_SDI, 0)
+            time.sleep(0.000001)
+            GPIO.output(self.E_Paper_SCK, 1)
+            time.sleep(0.000001)
+            value = (value << 1)
+        GPIO.output(self.E_Paper_SCK, 0)
 
-        self.send_command(0x02) # POWER_OFF
-        self.send_data(0X00)
-        self.check_busy()
+    def EPD_SPI_Read(self):
+        rdata = 0
+        for i in range(8):
+            GPIO.output(self.E_Paper_SCK, 0)
+            time.sleep(0.000002)
+            GPIO.output(self.E_Paper_SCK, 1)
+            time.sleep(0.000002)
+            rdata <<= 1
+            if GPIO.input(self.E_Paper_SDI):
+                rdata |= 0x01
+            time.sleep(0.000002)
+        GPIO.output(self.E_Paper_SCK, 0)
+        return rdata
 
-    def refresh(self):
-        self.send_command(0x12) # DISPLAY_REFRESH
-        epdconfig.delay_ms(300)
-        self.check_busy()
-        
-    def init(self):
-        logger.debug("Starting init routine")
-        if (epdconfig.module_init() != 0):
-            return -1
-        logger.debug("EDP module initialization complete")
-        # EPD hardware init start
-        self.reset()
+    def EPD_WriteCMD(self, command):
+        GPIO.output(self.E_Paper_CS, 0)
+        GPIO.output(self.E_Paper_DC, 0)
+        time.sleep(0.00001)
+        self.EPD_SPI_Write(command)
+        GPIO.output(self.E_Paper_CS, 1)
 
-        logger.debug("Resetting")
-        self.check_busy()
-        epdconfig.delay_ms(30)
+    def EPD_WriteDATA(self, data):
+        GPIO.output(self.E_Paper_CS, 0)
+        GPIO.output(self.E_Paper_DC, 1)
+        time.sleep(0.00001)
+        self.EPD_SPI_Write(data)
+        GPIO.output(self.E_Paper_CS, 1)
 
-        self.send_command(0x4D)
-        self.send_data(0x55)
+    def EPD_Check_Busy(self):
+        while True:
+            if not GPIO.input(self.E_Paper_BUSY):
+                break
 
-        self.send_command(0xA6)
-        self.send_data(0x38)
+    def EPD_initial(self):
+        GPIO.output(self.EPD_Rest, 0)
+        time.sleep(0.05)
+        GPIO.output(self.EPD_Rest, 1)
+        time.sleep(0.05)
+        self.EPD_Check_Busy()
 
-        self.send_command(0xB4)
-        self.send_data(0x5D)
-        
-        self.send_command(0xB6)
-        self.send_data(0x80)
+        self.EPD_WriteCMD(0x4D)
+        self.EPD_WriteDATA(0x55)
 
-        self.send_command(0xB7)
-        self.send_data(0x00)
+        self.EPD_WriteCMD(0xA6)
+        self.EPD_WriteDATA(0x38)
 
-        self.send_command(0xF7)
-        self.send_data(0x02)
+        self.EPD_WriteCMD(0xB4)
+        self.EPD_WriteDATA(0x5D)
 
-        self.send_command(0x04)
-        epdconfig.delay_ms(100)
-        self.check_busy()
-        logger.debug("Init complete")
-        return 0
+        self.EPD_WriteCMD(0xB6)
+        self.EPD_WriteDATA(0x80)
 
-    def getbuffer(self, image):
-        # Create a pallette with the 4 colors supported by the panel
-        pal_image = Image.new("P", (1,1))
-        pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0) + (0,0,0)*253)
+        self.EPD_WriteCMD(0xB7)
+        self.EPD_WriteDATA(0x00)
 
-        # Check if we need to rotate the image
-        imwidth, imheight = image.size
-        #logger.info(f"Image size")
-        if(imwidth == self.width and imheight == self.height):
-            image_temp = image
-        elif(imwidth == self.height and imheight == self.width):
-            image_temp = image.rotate(90, expand=True)
-        else:
-            logger.warning("Invalid image dimensions: %d x %d, expected %d x %d" % (imwidth, imheight, self.width, self.height))
+        self.EPD_WriteCMD(0xF7)
+        self.EPD_WriteDATA(0x02)
 
-        # Convert the soruce image to the 4 colors, dithering if needed
-        image_4color = image_temp.convert("RGB").quantize(palette=pal_image)
-        
-        buf_4color = bytearray(image_4color.tobytes('raw'))
+        self.EPD_WriteCMD(0x04)
+        time.sleep(0.1)
+        self.EPD_Check_Busy()
 
-        # into a single byte to transfer to the panel
-        buf = [0x00] * int(self.width * self.height / 3)
-        idx = 0
-        for i in range(0, len(buf_4color), 3):
-            buf[idx] = (buf_4color[i] << 5) + (buf_4color[i+1] << 2) + (buf_4color[i+2] >> 1)
-            #buf[idx] = (buf_4color[i] << 6) + (buf_4color[i+1] << 4) + (buf_4color[i+2] << 2) + buf_4color[i+3]
-            idx += 1
-        return buf
+    def EPD_refresh(self):
+        self.EPD_WriteCMD(0x12)
+        time.sleep(0.3)
+        self.EPD_Check_Busy()
 
-    def display(self, image):
-        logger.debug("Starting display")
-        if self.width % 8 == 0 :
-            Width = self.width // 8
-        else :
-            Width = self.width // 8 + 1
-        Height = self.height
+    def EPD_sleep(self):
+        self.EPD_WriteCMD(0X02)
+        time.sleep(0.1)
+        self.EPD_Check_Busy()
+        self.EPD_WriteCMD(0X07)
+        self.EPD_WriteDATA(0xA5)
 
-        self.send_command(0x10)
-        for j in range(0, Height):
-            for i in range(0, Width):
-                    self.send_data(image[i + j * Width])
-        logger.debug("Refreshing after image data written")
-        self.refresh()
-        logger.debug("Sleep after refresh")
-        self.sleep()
-        
-    def clear(self, color=0x55):
-        logger.debug("Clearing display")
-        if self.width % 8 == 0 :
-            Width = self.width // 8
-        else :
-            Width = self.width // 8 + 1
-        Height = self.height
+    def EPD_display_BMP(self, WK_data, R_data):
+        x_size = self.LCD_XSIZE // 8 if self.LCD_XSIZE % 8 else self.LCD_XSIZE // 8 + 1
+        self.EPD_WriteCMD(0x10)
+        for _ in range(self.LCD_YSIZE):
+            for _ in range(x_size):
+                self.EPD_WriteDATA(WK_data)
+                WK_data += 1
 
-        self.send_command(0x04)
-        self.check_busy()
+        self.EPD_WriteCMD(0x13)
+        for _ in range(self.LCD_YSIZE):
+            for _ in range(x_size):
+                self.EPD_WriteDATA(R_data)
+                R_data += 1
 
-        self.send_command(0x10)
-        for j in range(0, Height):
-            for i in range(0, Width):
-                self.send_data(color)
+        self.EPD_refresh()
+        self.EPD_sleep()
 
-        self.refresh()
-        self.sleep()
-
-    def sleep(self):
-        self.send_command(0x02) # POWER_OFF
-        epdconfig.delay_ms(100)
-        self.check_busy()
-        self.send_command(0x07) # Deep Sleep
-        self.send_data(0xA5)
-        epdconfig.module_exit()
-### END OF FILE ###
 
