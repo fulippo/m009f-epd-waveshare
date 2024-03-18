@@ -149,8 +149,12 @@ class EPD:
         logger.debug("Sleep after refresh")
         self.sleep()
         
-    def Clear(self, color=0x55):
-        Width = self.width // 4
+    def clear(self, color=0x55):
+        logger.debug("Clearing display")
+        if self.width % 8 == 0 :
+            Width = self.width // 8
+        else :
+            Width = self.width // 8 + 1
         Height = self.height
 
         self.send_command(0x04)
@@ -161,7 +165,7 @@ class EPD:
             for i in range(0, Width):
                 self.send_data(color)
 
-        self.TurnOnDisplay()
+        self.refresh()
 
     def sleep(self):
         self.send_command(0x02) # POWER_OFF

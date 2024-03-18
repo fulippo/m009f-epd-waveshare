@@ -21,7 +21,7 @@ try:
     epd = epd_wip.EPD()   
     logging.info("init and Clear")
     epd.init()
-    epd.Clear()
+    epd.clear()
     font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
     font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
     font40 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 40)
@@ -43,7 +43,7 @@ try:
         epd.display(epd.getbuffer(Himage))
         time.sleep(3)
         logging.info("Clear...")
-        epd.Clear()
+        epd.clear()
     
     
     
