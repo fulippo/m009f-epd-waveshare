@@ -49,7 +49,7 @@ class EPD:
         
     def check_busy(self):
         logger.debug("e-Paper still busy")
-        while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
+        while(epdconfig.digital_read(self.busy_pin) == 1):      # 0: idle, 1: busy
             epdconfig.delay_ms(5)
         logger.debug("e-Paper no longer busy")
 
