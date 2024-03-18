@@ -47,38 +47,32 @@ class EPD:
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
         
-    def ReadBusyH(self):
-        logger.debug("e-Paper busy H")
+    def check_busy(self):
+        logger.debug("e-Paper still busy")
         while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
             epdconfig.delay_ms(5)
-        logger.debug("e-Paper busy H release")
-
-    def ReadBusyL(self):
-        logger.debug("e-Paper busy L")
-        while(epdconfig.digital_read(self.busy_pin) == 1):      # 0: busy, 1: idle
-            epdconfig.delay_ms(5)
-        logger.debug("e-Paper busy L release")
+        logger.debug("e-Paper no longer busy")
 
     def TurnOnDisplay(self):
         self.send_command(0x12) # DISPLAY_REFRESH
         self.send_data(0x01)
-        self.ReadBusyH()
+        self.check_busy()
 
         self.send_command(0x02) # POWER_OFF
         self.send_data(0X00)
-        self.ReadBusyH()
+        self.check_busy()
 
     def refresh(self):
         self.send_command(0x12) # DISPLAY_REFRESH
         epdconfig.delay_ms(300)
-        self.ReadBusyH()
+        self.check_busy()
         
     def init(self):
         if (epdconfig.module_init() != 0):
             return -1
         # EPD hardware init start
         self.reset()
-        self.ReadBusyH()
+        self.check_busy()
         epdconfig.delay_ms(30)
 
         self.send_command(0x4D)
@@ -101,7 +95,7 @@ class EPD:
 
         self.send_command(0x04)
         epdconfig.delay_ms(100)
-        self.ReadBusyH()
+        self.check_busy()
         return 0
 
     def getbuffer(self, image):
@@ -134,25 +128,25 @@ class EPD:
         return buf
 
     def display(self, image):
-        Width = self.width // 4
+        if self.width % 8 == 0 :
+            Width = self.width // 8
+        else :
+            Width = self.width // 8 + 1
         Height = self.height
-
-        self.send_command(0x04)
-        self.ReadBusyH()
-        #logger.debug(f"image is {image}")
 
         self.send_command(0x10)
         for j in range(0, Height):
             for i in range(0, Width):
                     self.send_data(image[i + j * Width])
-        self.TurnOnDisplay()
+        self.refresh()
+        self.sleep()
         
     def Clear(self, color=0x55):
         Width = self.width // 4
         Height = self.height
 
         self.send_command(0x04)
-        self.ReadBusyH()
+        self.check_busy()
 
         self.send_command(0x10)
         for j in range(0, Height):
@@ -164,7 +158,7 @@ class EPD:
     def sleep(self):
         self.send_command(0x02) # POWER_OFF
         epdconfig.delay_ms(300)
-        self.ReadBusyH()
+        self.check_busy()
         epdconfig.module_exit()
 ### END OF FILE ###
 
