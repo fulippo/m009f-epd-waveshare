@@ -1,33 +1,3 @@
-# *****************************************************************************
-# * | File        :	  epd7in3g.py
-# * | Author      :   Waveshare team
-# * | Function    :   Electronic paper driver
-# * | Info        :
-# *----------------
-# * | This version:   V1
-# * | Date        :   2022-07-20
-# # | Info        :   python demo
-# -----------------------------------------------------------------------------
-# ******************************************************************************/
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documnetation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to  whom the Software is
-# furished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS OR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
 import logging
 from . import epdconfig
 
@@ -52,7 +22,9 @@ class EPD:
         self.BLACK  = 0x000000   #   00  BGR
         self.WHITE  = 0xffffff   #   01
         self.RED    = 0x0000ff   #   11
-        
+    
+    
+
     # Hardware reset
     def reset(self):
         epdconfig.digital_write(self.reset_pin, 1)
@@ -71,6 +43,7 @@ class EPD:
     def send_data(self, data):
         epdconfig.digital_write(self.dc_pin, 1)
         epdconfig.digital_write(self.cs_pin, 0)
+        epdconfig.delay_ms(10)
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
         
@@ -94,6 +67,11 @@ class EPD:
         self.send_command(0x02) # POWER_OFF
         self.send_data(0X00)
         self.ReadBusyH()
+
+    def refresh(self):
+        self.send_command(0x12) # DISPLAY_REFRESH
+        epdconfig.delay_ms(300)
+        self.ReadBusyH()
         
     def init(self):
         if (epdconfig.module_init() != 0):
@@ -103,70 +81,27 @@ class EPD:
         self.ReadBusyH()
         epdconfig.delay_ms(30)
 
-        self.send_command(0xAA)
-        self.send_data(0x49)
+        self.send_command(0x4D)
         self.send_data(0x55)
-        self.send_data(0x20)
-        self.send_data(0x08)
-        self.send_data(0x09)
-        self.send_data(0x18)
 
-        self.send_command(0x01)
-        self.send_data(0x3F)
+        self.send_command(0xA6)
+        self.send_data(0x38)
 
-        self.send_command(0x00)
-        self.send_data(0x4F)
-        self.send_data(0x69)
+        self.send_command(0xB4)
+        self.send_data(0x5D)
+        
+        self.send_command(0xB6)
+        self.send_data(0x80)
 
-        self.send_command(0x05)
-        self.send_data(0x40)
-        self.send_data(0x1F)
-        self.send_data(0x1F)
-        self.send_data(0x2C)
-
-        self.send_command(0x08)
-        self.send_data(0x6F)
-        self.send_data(0x1F)
-        self.send_data(0x1F)
-        self.send_data(0x22)
-
-        # ===================
-        # 20211212
-        # First setting
-        self.send_command(0x06)
-        self.send_data(0x6F)
-        self.send_data(0x1F)
-        self.send_data(0x14)
-        self.send_data(0x14)
-        # ===================
-
-        self.send_command(0x03)
+        self.send_command(0xB7)
         self.send_data(0x00)
-        self.send_data(0x54)
-        self.send_data(0x00)
-        self.send_data(0x44)
 
-        self.send_command(0x60)
+        self.send_command(0xF7)
         self.send_data(0x02)
-        self.send_data(0x00)
-        # Please notice that PLL must be set for version 2 IC
-        self.send_command(0x30)
-        self.send_data(0x08)
 
-        self.send_command(0x50)
-        self.send_data(0x3F)
-
-        self.send_command(0x61)
-        self.send_data(0x03)
-        self.send_data(0x20)
-        self.send_data(0x01)
-        self.send_data(0xE0)
-
-        self.send_command(0xE3)
-        self.send_data(0x2F)
-
-        self.send_command(0x84)
-        self.send_data(0x01)
+        self.send_command(0x04)
+        epdconfig.delay_ms(100)
+        self.ReadBusyH()
         return 0
 
     def getbuffer(self, image):
@@ -228,12 +163,8 @@ class EPD:
 
     def sleep(self):
         self.send_command(0x02) # POWER_OFF
-        self.send_data(0x00)
-
-        self.send_command(0x07) # DEEP_SLEEP
-        self.send_data(0XA5)
-        
-        epdconfig.delay_ms(2000)
+        epdconfig.delay_ms(300)
+        self.ReadBusyH()
         epdconfig.module_exit()
 ### END OF FILE ###
 
