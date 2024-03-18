@@ -166,11 +166,14 @@ class EPD:
                 self.send_data(color)
 
         self.refresh()
+        self.sleep()
 
     def sleep(self):
         self.send_command(0x02) # POWER_OFF
-        epdconfig.delay_ms(300)
+        epdconfig.delay_ms(100)
         self.check_busy()
+        self.send_command(0x07) # Deep Sleep
+        self.send_data(0xA5)
         epdconfig.module_exit()
 ### END OF FILE ###
 
