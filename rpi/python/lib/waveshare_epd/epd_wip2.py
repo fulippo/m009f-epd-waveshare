@@ -155,7 +155,7 @@ class EPD:
 
         # PIL does not support 4 bit color, so pack the 4 bits of color
         # into a single byte to transfer to the panel
-        buf = [0x00] * int(self.width * self.height / 2) * 8
+        buf = [0x00] * int(self.width * self.height / 2) * 4
         idx = 0
         for i in range(0, len(image_3color)):
             for j in range (0, 7):
