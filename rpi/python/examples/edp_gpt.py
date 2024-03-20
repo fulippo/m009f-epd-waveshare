@@ -152,16 +152,11 @@ def getimage():
     font40 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 40)
     Himage = Image.new('RGB', (EPD_WIDTH, EPD_HEIGHT), WHITE)  # 255: clear the frame
     draw = ImageDraw.Draw(Himage)
-    draw.text((5, 0), 'hello world', font = font18, fill = RED)
+    draw.text((5, 0), 'hello world', font=font18, fill=RED)
 
-
-    # draw.line((5, 170, 80, 245), fill = epd.RED)
-    
-    # draw.rectangle((5, 170, 80, 245), outline = epd.BLACK)
-    
-    # draw.arc((5, 250, 80, 325), 0, 360, fill = epd.BLACK)
-    # draw.chord((90, 250, 165, 325), 0, 360, fill = epd.RED)
-    return getbuffer(Himage)
+    # Convert image to byte array
+    image_bytes = Himage.tobytes('raw')
+    return image_bytes
     
 
 if __name__ == "__main__":
