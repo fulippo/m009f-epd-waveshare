@@ -157,9 +157,11 @@ class EPD:
         # into a single byte to transfer to the panel
         buf = [0x00] * int(self.width * self.height / 2)
         idx = 0
-        for i in range(0, len(image_3color), 2):
-            buf[idx] = (image_3color[i] << 2) + image_3color[i+1]
-            idx += 1
+        for i in range(0, len(image_3color)):
+            for j in range (0, 7):
+                #buf[idx] = (image_3color[i] << 2) + image_3color[i+1]
+                buf[idx] = (i >> j) & 1
+                idx += 1
             
         return buf
 

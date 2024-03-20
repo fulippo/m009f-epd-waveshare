@@ -31,7 +31,7 @@ try:
         logging.info("Start Drawing image")
         Himage = Image.new('RGB', (epd.width, epd.height), epd.WHITE)  # 255: clear the frame
         draw = ImageDraw.Draw(Himage)
-        draw.text((5, 0), 'hello world', font = font18, fill = epd.RED)
+        draw.text((5, 0), 'hello world', font = font18, fill = epd.BLACK)
 
 
         # draw.line((5, 170, 80, 245), fill = epd.RED)
