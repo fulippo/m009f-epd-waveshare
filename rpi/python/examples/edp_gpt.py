@@ -20,9 +20,6 @@ E_Paper_SCK = 5
 E_Paper_SDI = 7
 E_Paper_BUSY = 0
 
-
-
-
 def load_image(file_path):
     image = Image.open(file_path)
     image = image.convert("L")  # Convert to grayscale
