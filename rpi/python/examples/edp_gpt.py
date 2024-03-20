@@ -112,15 +112,15 @@ def EPD_sleep():
     EPD_WriteDATA(0xA5)
 
 def EPD_display_BMP(WK_data):
-    x_size = LCD_XSIZE // 8 if LCD_XSIZE % 8 == 0 else LCD_XSIZE // 8 + 1
+    x_size = EPD_WIDTH // 8 if EPD_WIDTH % 8 == 0 else EPD_WIDTH // 8 + 1
     EPD_WriteCMD(0x10)
-    for _ in range(LCD_YSIZE):
+    for _ in range(EPD_HEIGHT):
         for _ in range(x_size):
             EPD_WriteDATA(WK_data)
             WK_data += 1
 
     # EPD_WriteCMD(0x13)
-    # for _ in range(LCD_YSIZE):
+    # for _ in range(EPD_HEIGHT):
     #     for _ in range(x_size):
     #         EPD_WriteDATA(R_data)
     #         R_data += 1
