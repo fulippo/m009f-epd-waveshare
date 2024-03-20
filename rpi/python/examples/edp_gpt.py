@@ -19,13 +19,13 @@ RED    = 0x0000ff   #   0100
 
 
 # Define GPIO pin numbers
-E_Paper_BS_PIN = 9
-EPD_Rest_PIN = 11
-E_Paper_DC_PIN = 10
-E_Paper_CS_PIN = 3
-E_Paper_SCK_PIN = 5
-E_Paper_SDI_PIN = 7
-E_Paper_BUSY_PIN = 0
+E_Paper_BS_PIN = 31
+EPD_Rest_PIN = 23
+E_Paper_DC_PIN = 19
+E_Paper_CS_PIN = 5
+E_Paper_SCK_PIN = 29
+E_Paper_SDI_PIN = 21
+E_Paper_BUSY_PIN = 11
 
 # Setup GPIO
 GPIO.setmode(GPIO.BOARD)
