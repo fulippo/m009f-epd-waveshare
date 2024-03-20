@@ -201,6 +201,7 @@ class EPD:
             Width = self.width // 4
         else :
             Width = self.width // 4 + 1
+        Height = self.height
 
         self.send_command(0x04)
         self.ReadBusyH()
@@ -217,6 +218,7 @@ class EPD:
             Width = self.width // 4
         else :
             Width = self.width // 4 + 1
+        Height = self.height
 
         self.send_command(0x04)
         self.ReadBusyH()
