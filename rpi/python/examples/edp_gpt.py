@@ -21,7 +21,7 @@ E_Paper_BUSY = 0
 
 def delay_us(microseconds):
     time.sleep(microseconds / 1000000.0)
-def delay_ms(self, delaytime):
+def delay_ms(delaytime):
     time.sleep(delaytime / 1000.0)
 def EPD_SPI_Write(value):
     E_Paper_SCK = 0
