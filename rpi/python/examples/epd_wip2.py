@@ -41,6 +41,7 @@ try:
         # draw.arc((5, 250, 80, 325), 0, 360, fill = epd.BLACK)
         # draw.chord((90, 250, 165, 325), 0, 360, fill = epd.RED)
         epd.display(epd.getbuffer(Himage))
+        logging.info("Image rendered")
         time.sleep(30)
         logging.info("Clear...")
         epd.clear()
