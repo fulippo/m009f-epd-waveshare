@@ -43,7 +43,7 @@ try:
         epd.display(epd.getbuffer(Himage))
         time.sleep(3)
         logging.info("Clear...")
-        epd.Clear()
+        epd.clear()
     
     
     
