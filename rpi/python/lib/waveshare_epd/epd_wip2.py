@@ -158,7 +158,7 @@ class EPD:
         buf = [0x00] * int(self.width * self.height / 2) * 4
         idx = 0
         for i in range(0, len(image_3color)):
-            buf[idx] = 1
+            buf[idx] = 0
             idx += 1
             
         return buf
