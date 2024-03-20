@@ -153,34 +153,13 @@ class EPD:
         image_3color = image_temp.convert("RGB").quantize(palette=pal_image)
         image_3color = bytearray(image_3color.tobytes('raw'))
 
-        # # PIL does not support 4 bit color, so pack the 4 bits of color
-        # # into a single byte to transfer to the panel
-        # buf = [0x00] * int(self.width * self.height / 2)
-        # idx = 0
-        # for i in range(0, len(image_3color), 2):
-        #     buf[idx] = (image_3color[i] << 2) + image_3color[i+1]
-        #     idx += 1
-        buf = bytearray(int(self.width * self.height / 8))
+        # PIL does not support 4 bit color, so pack the 4 bits of color
+        # into a single byte to transfer to the panel
+        buf = [0x00] * int(self.width * self.height / 2)
         idx = 0
-        bit_position = 0
-        byte_value = 0
-
-        for pixel in image_3color:
-            for i in range(8):
-                GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
-                if value & 0x80:
-                    GPIO.output(E_Paper_SDI_PIN, GPIO.HIGH)
-                else:
-                    GPIO.output(E_Paper_SDI_PIN, GPIO.LOW)
-                time.sleep(0.000001)  # 1 microsecond delay
-                GPIO.output(E_Paper_SCK_PIN, GPIO.HIGH)
-                time.sleep(0.000001)  # 1 microsecond delay
-                value = (value << 1)
-            GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
-
-        # If there are remaining bits, write the byte
-        if bit_position != 0:
-            buf[idx] = byte_value
+        for i in range(0, len(image_3color), 2):
+            buf[idx] = (image_3color[i] << 2) + image_3color[i+1]
+            idx += 1
             
         return buf
 
