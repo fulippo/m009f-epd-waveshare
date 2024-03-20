@@ -165,7 +165,7 @@ class EPD:
 
     def display(self, image):
         self.send_command(0x10)
-        self.send_data2(image)
+        self.send_data(image)
 
         self.TurnOnDisplay()
         
