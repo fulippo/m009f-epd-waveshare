@@ -130,21 +130,21 @@ def EPD_display_BMP(WK_data):
 
 def getbuffer(image):
     pal_image = Image.new("P", (1,1))
-    pal_image.putpalette( (0,0,0,  255,255,255,  255,0,0) + (0,0,0)*253)
+    pal_image.putpalette((0,0,0, 255,255,255, 255,0,0) + (0,0,0)*253)
 
     # Check if we need to rotate the image
     imwidth, imheight = image.size
-    if(imwidth == EPD_WIDTH and imheight == EPD_HEIGHT):
+    if imwidth == EPD_WIDTH and imheight == EPD_HEIGHT:
         image_temp = image
-    elif(imwidth == EPD_HEIGHT and imheight == EPD_WIDTH):
+    elif imwidth == EPD_HEIGHT and imheight == EPD_WIDTH:
         image_temp = image.rotate(90, expand=True)
     else:
-        logger.warning("Invalid image dimensions: %d x %d, expected %d x %d" % (imwidth, imheight, 800, 600))
+        logger.warning("Invalid image dimensions: %d x %d, expected %d x %d" % (imwidth, imheight, EPD_WIDTH, EPD_HEIGHT))
 
-    # Convert the soruce image to the 7 colors, dithering if needed
+    # Convert the source image to the 7 colors, dithering if needed
     image_3color = image_temp.convert("RGB").quantize(palette=pal_image)
-    image_3color = bytearray(image_3color.tobytes('raw'))
-    return image_3color
+    image_bytes = image_3color.tobytes('raw')
+    return bytearray(image_bytes)
 
 def getimage():
     font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
