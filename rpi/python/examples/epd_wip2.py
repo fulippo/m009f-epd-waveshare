@@ -28,7 +28,7 @@ try:
     
     while True:
         # Drawing on the image
-        logging.info("1.Drawing on the image...")
+        logging.info("Start Drawing image")
         Himage = Image.new('RGB', (epd.width, epd.height), epd.WHITE)  # 255: clear the frame
         draw = ImageDraw.Draw(Himage)
         draw.text((5, 0), 'hello world', font = font18, fill = epd.RED)
@@ -41,7 +41,7 @@ try:
         # draw.arc((5, 250, 80, 325), 0, 360, fill = epd.BLACK)
         # draw.chord((90, 250, 165, 325), 0, 360, fill = epd.RED)
         epd.display(epd.getbuffer(Himage))
-        time.sleep(3)
+        time.sleep(30)
         logging.info("Clear...")
         epd.clear()
     
