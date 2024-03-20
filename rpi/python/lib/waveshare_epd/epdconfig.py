@@ -43,6 +43,8 @@ class RaspberryPi:
     CS_PIN   = 8
     BUSY_PIN = 24
     PWR_PIN  = 18
+    SCK_PIN  = 23
+
 
     def __init__(self):
         import spidev

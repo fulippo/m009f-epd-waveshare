@@ -166,14 +166,17 @@ class EPD:
         byte_value = 0
 
         for pixel in image_3color:
-            if pixel < 128:  # Threshold for black and white conversion
-                byte_value |= 1 << (7 - bit_position)  # Set the corresponding bit for black
-            bit_position += 1
-            if bit_position == 8:
-                buf[idx] = byte_value
-                idx += 1
-                bit_position = 0
-                byte_value = 0
+            for i in range(8):
+                GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
+                if value & 0x80:
+                    GPIO.output(E_Paper_SDI_PIN, GPIO.HIGH)
+                else:
+                    GPIO.output(E_Paper_SDI_PIN, GPIO.LOW)
+                time.sleep(0.000001)  # 1 microsecond delay
+                GPIO.output(E_Paper_SCK_PIN, GPIO.HIGH)
+                time.sleep(0.000001)  # 1 microsecond delay
+                value = (value << 1)
+            GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
 
         # If there are remaining bits, write the byte
         if bit_position != 0:
