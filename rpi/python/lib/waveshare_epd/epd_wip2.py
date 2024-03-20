@@ -153,13 +153,31 @@ class EPD:
         image_3color = image_temp.convert("RGB").quantize(palette=pal_image)
         image_3color = bytearray(image_3color.tobytes('raw'))
 
-        # PIL does not support 4 bit color, so pack the 4 bits of color
-        # into a single byte to transfer to the panel
-        buf = [0x00] * int(self.width * self.height / 2)
+        # # PIL does not support 4 bit color, so pack the 4 bits of color
+        # # into a single byte to transfer to the panel
+        # buf = [0x00] * int(self.width * self.height / 2)
+        # idx = 0
+        # for i in range(0, len(image_3color), 2):
+        #     buf[idx] = (image_3color[i] << 2) + image_3color[i+1]
+        #     idx += 1
+        buf = bytearray(int(self.width * self.height / 8))
         idx = 0
-        for i in range(0, len(image_3color), 2):
-            buf[idx] = (image_3color[i] << 2) + image_3color[i+1]
-            idx += 1
+        bit_position = 0
+        byte_value = 0
+
+        for pixel in image_3color:
+            if pixel < 128:  # Threshold for black and white conversion
+                byte_value |= 1 << (7 - bit_position)  # Set the corresponding bit for black
+            bit_position += 1
+            if bit_position == 8:
+                buf[idx] = byte_value
+                idx += 1
+                bit_position = 0
+                byte_value = 0
+
+        # If there are remaining bits, write the byte
+        if bit_position != 0:
+            buf[idx] = byte_value
             
         return buf
 
