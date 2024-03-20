@@ -162,7 +162,7 @@ if __name__ == "__main__":
     GPIO.setup(E_Paper_CS, GPIO.OUT)
     GPIO.setup(E_Paper_SCK, GPIO.OUT)
     GPIO.setup(E_Paper_SDI, GPIO.OUT)
-    GPIO.setup(E_Paper_BS, GPIO.OUT)
+    #GPIO.setup(E_Paper_BS, GPIO.OUT)
     GPIO.setup(E_Paper_BUSY, GPIO.IN)
     image_file = os.path.join(picdir, '7in3f1.bmp')  # Change this to your image file path
     display_image(image_file)
