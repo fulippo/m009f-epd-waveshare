@@ -46,17 +46,18 @@ def delay_ms(delay):
 
 # Define functions equivalent to the C functions
 def EPD_SPI_Write(value):
-    for i in range(8):
+    for byte in value:
+        for i in range(8):
+            GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
+            if byte & 0x80:
+                GPIO.output(E_Paper_SDI_PIN, GPIO.HIGH)
+            else:
+                GPIO.output(E_Paper_SDI_PIN, GPIO.LOW)
+            delay_us(1)
+            GPIO.output(E_Paper_SCK_PIN, GPIO.HIGH)
+            delay_us(1)
+            byte <<= 1
         GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
-        if value & 0x80:
-            GPIO.output(E_Paper_SDI_PIN, GPIO.HIGH)
-        else:
-            GPIO.output(E_Paper_SDI_PIN, GPIO.LOW)
-        delay_us(1)
-        GPIO.output(E_Paper_SCK_PIN, GPIO.HIGH)
-        delay_us(1)
-        value = (value << 1)
-    GPIO.output(E_Paper_SCK_PIN, GPIO.LOW)
 
 def EPD_WriteCMD(command):
     GPIO.output(E_Paper_CS_PIN, GPIO.LOW)
