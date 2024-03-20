@@ -5,6 +5,9 @@ import numpy as np
 import sys
 import os
 
+picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'pic')
+
+
 LCD_XSIZE = 800
 LCD_YSIZE = 480
 
