@@ -143,7 +143,7 @@ class EPD:
         self.send_command(0x10)
         for j in range(0, Height):
             for i in range(0, Width):
-                    self.send_data(image[i + j * Width])
+                    self.send_data(1)
         logger.debug("Refreshing after image data written")
         self.refresh()
         logger.debug("Sleep after refresh")
