@@ -117,7 +117,6 @@ def EPD_display_BMP(WK_data):
     for _ in range(EPD_HEIGHT):
         for _ in range(x_size):
             EPD_WriteDATA(WK_data)
-            WK_data += 1
 
     # EPD_WriteCMD(0x13)
     # for _ in range(EPD_HEIGHT):
