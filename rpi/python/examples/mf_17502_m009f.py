@@ -6,11 +6,10 @@ picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__)
 drivers_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'drivers')
 
 if os.path.exists(drivers_dir):
-    print(drivers_dir)
     sys.path.append(drivers_dir)
 
 import logging
-import drivers.mf_17502_m009f as EPD
+from drivers import mf_17502_m009f
 import time
 from PIL import Image,ImageDraw,ImageFont
 
@@ -19,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 try:
     logging.info("mf_17502_m009f Demo")
 
-    epd = EPD()
+    epd = mf_17502_m009f.EPD()
     logging.info("init and Clear")
     epd.init()
     epd.Clear()
@@ -84,7 +83,7 @@ try:
 
     logging.info("Clear...")
     epd.init()
-    epd.Clear()
+    epd.clear()
 
     logging.info("Goto Sleep...")
     epd.sleep()
