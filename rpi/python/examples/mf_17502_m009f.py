@@ -9,7 +9,7 @@ if os.path.exists(drivers_dir):
     sys.path.append(drivers_dir)
 
 import logging
-from drivers import mf_17502_m009f
+from drivers.mf_17502_m009f import EPD
 import time
 from PIL import Image,ImageDraw,ImageFont
 
@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 try:
     logging.info("mf_17502_m009f Demo")
 
-    epd = mf_17502_m009f.EPD()
+    epd = EPD()
     logging.info("init and Clear")
     epd.init()
     epd.Clear()
