@@ -25,10 +25,11 @@ try:
     epd.clear()
 
     font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
+    font48 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 48)
     font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
 
     now = datetime.datetime.now()
-    day = now.strftime("%A")
+    day = now.strftime('%A %d')
 
     # Drawing on the Horizontal image
     logging.info("1.Drawing on the Horizontal image...")
@@ -36,12 +37,8 @@ try:
     red_image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
     draw_black_image = ImageDraw.Draw(black_image)
     
-    draw_black_image.text((10, 0), day, font = font24, fill = 0)
-    draw_black_image.text((10, 20), '7.5inch e-Paper', font = font24, fill = 0)
-    draw_black_image.line((140, 75, 190, 75), fill = 0)
-    draw_black_image.arc((140, 50, 190, 100), 0, 360, fill = 0)
-    draw_black_image.rectangle((80, 50, 130, 100), fill = 0)
-    draw_black_image.chord((200, 50, 250, 100), 0, 360, fill = 0)
+    draw_black_image.text((10, 0), day, font = font48, fill = 0)
+    draw_black_image.rectangle([0, 0, 480, 100], fill = 0, width=1)
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(2)
 
