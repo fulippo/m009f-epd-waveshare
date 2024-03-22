@@ -35,7 +35,6 @@ try:
     draw_other = ImageDraw.Draw(Other)
     draw_Himage.text((10, 0), 'hello world', font = font24, fill = 0)
     draw_Himage.text((10, 20), '7.5inch e-Paper', font = font24, fill = 0)
-    draw_Himage.text((150, 0), u'微雪电子', font = font24, fill = 0)    
     draw_other.line((20, 50, 70, 100), fill = 0)
     draw_other.line((70, 50, 20, 100), fill = 0)
     draw_other.rectangle((20, 50, 70, 100), outline = 0)
@@ -55,7 +54,6 @@ try:
     draw_Himage_Other = ImageDraw.Draw(Limage_Other)
     draw_Himage.text((2, 0), 'hello world', font = font18, fill = 0)
     draw_Himage.text((2, 20), '7.5inch epd', font = font18, fill = 0)
-    draw_Himage_Other.text((20, 50), u'微雪电子', font = font18, fill = 0)
     draw_Himage_Other.line((10, 90, 60, 140), fill = 0)
     draw_Himage_Other.line((60, 90, 10, 140), fill = 0)
     draw_Himage_Other.rectangle((10, 90, 60, 140), outline = 0)
@@ -73,14 +71,14 @@ try:
     epd.display(epd.getbuffer(Himage),epd.getbuffer(Himage_Other))
     time.sleep(2)
 
-    logging.info("4.read bmp file on window")
-    Himage2 = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-    Himage2_Other = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-    bmp = Image.open(os.path.join(picdir, '2in9.bmp'))
-    Himage2.paste(bmp, (50,10))
-    Himage2_Other.paste(bmp, (50,300))
-    epd.display(epd.getbuffer(Himage2), epd.getbuffer(Himage2_Other))
-    time.sleep(2)
+    # logging.info("4.read bmp file on window")
+    # Himage2 = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
+    # Himage2_Other = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
+    # bmp = Image.open(os.path.join(picdir, '2in9.bmp'))
+    # Himage2.paste(bmp, (50,10))
+    # Himage2_Other.paste(bmp, (50,300))
+    # epd.display(epd.getbuffer(Himage2), epd.getbuffer(Himage2_Other))
+    # time.sleep(2)
 
     logging.info("Clear...")
     epd.init()
@@ -94,5 +92,5 @@ except IOError as e:
     
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
-    #driver.module_exit(cleanup=True)
+    EPD.module_exit(cleanup=True)
     exit()
