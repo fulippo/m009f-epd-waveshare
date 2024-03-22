@@ -18,6 +18,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 
+def drawRow(pil_image, text, font):
+  pil_image.rectangle([0, 0, 478, 98], outline = 0, width=1)
+  pil_image.text((10, 0), text, font = font, fill = 0)
+
+
 try:
     epd = EPD()
     logging.info("init and Clear")
@@ -38,7 +43,12 @@ try:
     draw_black_image = ImageDraw.Draw(black_image)
     
     draw_black_image.text((10, 0), day, font = font48, fill = 0)
-    draw_black_image.rectangle([0, 0, 480, 100], outline = 0, width=1)
+    draw_black_image.rectangle([0, 0, 478, 98], outline = 0, width=1)
+
+    drawRow(draw_black_image, day, font48)
+    for x in range(4):
+        drawRow(draw_black_image, f"Riga numero {x}", font18)
+
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(120)
 
