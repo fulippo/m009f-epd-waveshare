@@ -9,7 +9,7 @@ if os.path.exists(drivers_dir):
     sys.path.append(drivers_dir)
 
 import logging
-from drivers.mf_17502_m009f import EPD
+import drivers.mf_17502_m009f as EPD
 import time
 from PIL import Image,ImageDraw,ImageFont
 
