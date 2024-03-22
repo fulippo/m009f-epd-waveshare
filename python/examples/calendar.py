@@ -18,9 +18,15 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 
-def drawRow(pil_image, text, font):
-  pil_image.rectangle([0, 0, 478, 98], outline = 0, width=1)
-  pil_image.text((10, 0), text, font = font, fill = 0)
+def drawRow(pil_image, text, font, row_number = 1):
+  row_height = 98
+  row_width = 478
+  x0 = 0
+  x1 = row_width
+  y0 = (row_number-1) * row_height
+  y1 = row_number * row_height
+  pil_image.rectangle([x0, y0, x1, y1], outline = 0, width=1)
+  pil_image.text((10, y0), text, font = font, fill = 0)
 
 
 try:
@@ -65,5 +71,5 @@ except IOError as e:
     
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
-    EPD.module_exit(cleanup=True)
+    epd.module_exit(cleanup=True)
     exit()
