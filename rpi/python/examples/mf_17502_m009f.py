@@ -2,23 +2,22 @@
 # -*- coding:utf-8 -*-
 import sys
 import os
-picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'pic')
+picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'images')
 libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'lib')
 if os.path.exists(libdir):
     sys.path.append(libdir)
 
 import logging
-from waveshare_epd import epd7in5b_V2
+from drivers import mf_17502_m009f
 import time
 from PIL import Image,ImageDraw,ImageFont
-import traceback
 
 logging.basicConfig(level=logging.DEBUG)
 
 try:
-    logging.info("epd7in5b_V2 Demo")
+    logging.info("mf_17502_m009f Demo")
 
-    epd = epd7in5b_V2.EPD()
+    epd = mf_17502_m009f.EPD()
     logging.info("init and Clear")
     epd.init()
     epd.Clear()
@@ -93,5 +92,5 @@ except IOError as e:
     
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
-    epd7in5b_V2.epdconfig.module_exit(cleanup=True)
+    mf_17502_m009f.epdconfig.module_exit(cleanup=True)
     exit()

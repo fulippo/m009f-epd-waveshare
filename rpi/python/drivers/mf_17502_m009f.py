@@ -1,33 +1,3 @@
-# *****************************************************************************
-# * | File        :	  epd7in5b_V2.py
-# * | Author      :   Waveshare team
-# * | Function    :   Electronic paper driver
-# * | Info        :
-# *----------------
-# * | This version:   V4.2
-# * | Date        :   2022-01-08
-# # | Info        :   python demo
-# -----------------------------------------------------------------------------
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documnetation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to  whom the Software is
-# furished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS OR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
-#
-
-
 import logging
 from . import epdconfig
 
@@ -73,7 +43,7 @@ class EPD:
         epdconfig.spi_writebyte2(data)
         epdconfig.digital_write(self.cs_pin, 1)
 
-    def ReadBusy(self):
+    def busy(self):
         logger.debug("e-Paper busy")
         self.send_command(0x71)
         busy = epdconfig.digital_read(self.busy_pin)
@@ -88,7 +58,7 @@ class EPD:
             return -1
             
         self.reset()
-        self.ReadBusy()
+        self.busy()
         
         # self.send_command(0x06)   # btst
         # self.send_data(0x17)
@@ -116,7 +86,7 @@ class EPD:
 
         self.send_command(0x04)
         epdconfig.delay_ms(100)
-        self.ReadBusy()
+        self.busy()
         logger.debug("Init complete")
     
         return 0
@@ -153,9 +123,9 @@ class EPD:
         
         self.send_command(0x12)
         epdconfig.delay_ms(100)
-        self.ReadBusy()
+        self.busy()
         
-    def Clear(self):
+    def clear(self):
         buf = [0x00] * (int(self.width/8) * self.height)
         buf2 = [0xff] * (int(self.width/8) * self.height)
         self.send_command(0x10)
@@ -166,11 +136,11 @@ class EPD:
                 
         self.send_command(0x12)
         epdconfig.delay_ms(100)
-        self.ReadBusy()
+        self.busy()
 
     def sleep(self):
         self.send_command(0x02) # POWER_OFF
-        self.ReadBusy()
+        self.busy()
         
         self.send_command(0x07) # DEEP_SLEEP
         self.send_data(0XA5)
