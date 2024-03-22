@@ -32,16 +32,17 @@ try:
 
     # Drawing on the Horizontal image
     logging.info("1.Drawing on the Horizontal image...")
-    Himage = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
-    draw_Himage = ImageDraw.Draw(Himage)
+    black_image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
+    red_image = Image.new('1', (epd.height, epd.width), 255)  # 255: clear the frame
+    draw_black_image = ImageDraw.Draw(black_image)
     
-    draw_Himage.text((10, 0), day, font = font24, fill = 0)
-    draw_Himage.text((10, 20), '7.5inch e-Paper', font = font24, fill = 0)
-    draw_Himage.line((140, 75, 190, 75), fill = 0)
-    draw_Himage.arc((140, 50, 190, 100), 0, 360, fill = 0)
-    draw_Himage.rectangle((80, 50, 130, 100), fill = 0)
-    draw_Himage.chord((200, 50, 250, 100), 0, 360, fill = 0)
-    epd.display(epd.getbuffer(Himage), [])
+    draw_black_image.text((10, 0), day, font = font24, fill = 0)
+    draw_black_image.text((10, 20), '7.5inch e-Paper', font = font24, fill = 0)
+    draw_black_image.line((140, 75, 190, 75), fill = 0)
+    draw_black_image.arc((140, 50, 190, 100), 0, 360, fill = 0)
+    draw_black_image.rectangle((80, 50, 130, 100), fill = 0)
+    draw_black_image.chord((200, 50, 250, 100), 0, 360, fill = 0)
+    epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(2)
 
 
