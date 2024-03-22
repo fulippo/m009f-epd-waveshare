@@ -88,6 +88,7 @@ class EPD:
             return -1
             
         self.reset()
+        self.ReadBusy()
         
         # self.send_command(0x06)   # btst
         # self.send_data(0x17)
@@ -115,7 +116,7 @@ class EPD:
 
         self.send_command(0x04)
         epdconfig.delay_ms(100)
-        self.ReadBusyH()
+        self.ReadBusy()
         logger.debug("Init complete")
     
         return 0
