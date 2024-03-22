@@ -3,9 +3,9 @@
 import sys
 import os
 picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'images')
-libdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'drivers')
-if os.path.exists(libdir):
-    sys.path.append(libdir)
+drivers_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'drivers')
+if os.path.exists(drivers_dir):
+    sys.path.append(drivers_dir)
 
 import logging
 from drivers import mf_17502_m009f
