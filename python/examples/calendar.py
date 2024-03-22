@@ -13,6 +13,8 @@ import logging
 from mf_17502_m009f import EPD
 import time
 from PIL import Image,ImageDraw,ImageFont
+from gcsa.google_calendar import GoogleCalendar
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -50,7 +52,9 @@ try:
     
     draw_black_image.text((10, 0), day, font = font48, fill = 0)
     draw_black_image.rectangle([0, 0, 478, 98], outline = 0, width=1)
-
+    calendar = GoogleCalendar('filippo.pisano@gmail.com')
+    for event in calendar:
+        print(event)
     drawRow(draw_black_image, day, font48)
     for x in range(2,4):
         drawRow(draw_black_image, f"Riga numero {x}", font18, row_number=x)
