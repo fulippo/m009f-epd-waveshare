@@ -10,7 +10,7 @@ if os.path.exists(drivers_dir):
     sys.path.append(drivers_dir)
 
 import logging
-import mf_17502_m009f as driver
+import mf_17502_m009f
 import time
 from PIL import Image,ImageDraw,ImageFont
 
@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.DEBUG)
 try:
     logging.info("mf_17502_m009f Demo")
 
-    epd = driver.EPD()
+    epd = mf_17502_m009f.EPD()
     logging.info("init and Clear")
     epd.init()
     epd.Clear()
@@ -94,5 +94,5 @@ except IOError as e:
     
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
-    mf_17502_m009f.epdconfig.module_exit(cleanup=True)
+    mf_17502_m009f.module_exit(cleanup=True)
     exit()
