@@ -94,5 +94,5 @@ except IOError as e:
     
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
-    driver.module_exit(cleanup=True)
+    #driver.module_exit(cleanup=True)
     exit()
