@@ -2,9 +2,6 @@ import logging
 import gpiozero
 import spidev
 
-
-
-
 logger = logging.getLogger(__name__)
 
 class EPD:
