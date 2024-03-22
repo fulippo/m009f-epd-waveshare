@@ -1,6 +1,7 @@
 import logging
 import gpiozero
 import spidev
+import time
 
 logger = logging.getLogger(__name__)
 
