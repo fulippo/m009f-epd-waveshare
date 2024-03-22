@@ -4,8 +4,9 @@ import sys
 import os
 picdir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'images')
 drivers_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'drivers')
-print(drivers_dir)
+
 if os.path.exists(drivers_dir):
+    print(drivers_dir)
     sys.path.append(drivers_dir)
 
 import logging
