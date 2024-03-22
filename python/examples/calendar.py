@@ -52,8 +52,8 @@ try:
     draw_black_image.rectangle([0, 0, 478, 98], outline = 0, width=1)
 
     drawRow(draw_black_image, day, font48)
-    for x in range(4):
-        drawRow(draw_black_image, f"Riga numero {x}", font18)
+    for x in range(2,4):
+        drawRow(draw_black_image, f"Riga numero {x}", font18, row_number=x)
 
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(120)
