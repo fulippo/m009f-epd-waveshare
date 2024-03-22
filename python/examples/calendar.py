@@ -38,7 +38,7 @@ try:
     draw_black_image = ImageDraw.Draw(black_image)
     
     draw_black_image.text((10, 0), day, font = font48, fill = 0)
-    draw_black_image.rectangle([0, 0, 480, 100], fill = 0, width=1)
+    draw_black_image.rectangle([0, 0, 480, 100], outline = 0, width=1)
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(2)
 

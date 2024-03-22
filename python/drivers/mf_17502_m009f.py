@@ -145,7 +145,7 @@ class EPD:
             return -1
             
         self.reset()
-        self.busy()
+        #self.busy()
         
         # self.send_command(0x06)   # btst
         # self.send_data(0x17)
@@ -173,7 +173,7 @@ class EPD:
 
         self.send_command(0x04)
         self.delay_ms(100)
-        self.busy()
+        #self.busy()
         logger.debug("Init complete")
     
         return 0
