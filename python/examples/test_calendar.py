@@ -53,11 +53,14 @@ try:
     draw_black_image.text((10, 0), day, font = font48, fill = 0)
     draw_black_image.rectangle([0, 0, 478, 98], outline = 0, width=1)
     calendar = GoogleCalendar('filippo.pisano@gmail.com')
+    home_calendar = calendar.get_calendar('8i0ce1apg9n092h2rq91ao07n0@group.calendar.google.com')
     for event in calendar:
         print(event)
     drawRow(draw_black_image, day, font48)
-    for x in range(len(calendar)):
-        drawRow(draw_black_image, calendar[x], font18, row_number=x)
+    row_number=1
+    for event in calendar:
+        drawRow(draw_black_image, event, font18, row_number=row_number)
+        row_number+=1
 
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(120)
