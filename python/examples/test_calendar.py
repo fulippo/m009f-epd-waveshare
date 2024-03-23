@@ -55,11 +55,11 @@ try:
     calendar = GoogleCalendar('filippo.pisano@gmail.com')
     home_calendar = calendar.get_calendar('8i0ce1apg9n092h2rq91ao07n0@group.calendar.google.com')
     for event in calendar:
-        print(event.get("summary"))
+        print(event.summary)
     drawRow(draw_black_image, day, font48)
     row_number=1
     for event in calendar:
-        drawRow(draw_black_image, event.get("summary"), font18, row_number=row_number)
+        drawRow(draw_black_image, event.summary, font18, row_number=row_number)
         row_number+=1
 
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
