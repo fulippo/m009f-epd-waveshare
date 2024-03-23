@@ -56,8 +56,8 @@ try:
     for event in calendar:
         print(event)
     drawRow(draw_black_image, day, font48)
-    for x in range(2,4):
-        drawRow(draw_black_image, f"Riga numero {x}", font18, row_number=x)
+    for x in range(len(calendar)):
+        drawRow(draw_black_image, calendar[x], font18, row_number=x)
 
     epd.display(epd.getbuffer(black_image), epd.getbuffer(red_image))
     time.sleep(120)
