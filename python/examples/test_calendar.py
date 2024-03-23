@@ -56,7 +56,7 @@ try:
     home_calendar = calendar.get_calendar('8i0ce1apg9n092h2rq91ao07n0@group.calendar.google.com')
     drawRow(draw_black_image, day, font48)
     row_number=2
-    for event in home_calendar:
+    for event in home_calendar.get_events():
         drawRow(draw_black_image, event.summary, font18, row_number=row_number)
         row_number+=1
 
